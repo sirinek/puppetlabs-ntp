@@ -57,6 +57,24 @@ fudge    127.127.1.0 stratum <%= @udlc_stratum %>
 restrict 127.127.1.0
 <% end -%>
 
+<% if @disable_monitor == false -%>
+<% if @statsdir -%>
+# Statsdir
+statsdir <%= statsdir -%>
+<% end -%>
+
+<% if @filegen and ! @filegen.empty? -%>
+<% @filegen.each_pair do |fileset_type, args| -%>
+filegen <%= fileset_type %> <%= args -%>
+<% end -%>
+<% end -%>
+<% end -%>
+
+<% if @pidfile -%>
+# Pidfile
+pidfile <%= pidfile -%>
+<% end -%>
+
 # Driftfile.
 driftfile <%= @driftfile %>
 
@@ -97,4 +115,3 @@ leapfile <%= @leapfile %>
 <% if @tos == true -%>
 tos <% if @tos_minclock -%> minclock <%= @tos_minclock %><% end %><% if @tos_minsane -%> minsane <%= @tos_minsane %><% end %><% if @tos_floor -%> floor <%= @tos_floor %><% end %><% if @tos_ceiling -%> ceiling <%= @tos_ceiling %><% end %><% if @tos_cohort -%> cohort <%= @tos_cohort %><% end %>
 <% end %>
-

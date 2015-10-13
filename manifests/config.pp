@@ -1,6 +1,16 @@
 #
 class ntp::config inherits ntp {
 
+  $ntp_log_owner = $::osfamily ? {
+    /^(Solaris|AIX)$/ => 0,
+    default           => 'ntp'
+  }
+
+  $ntp_log_group = $::osfamily ? {
+    /^(Solaris|AIX)$/ => 0,
+    default           => 'ntp'
+  }
+
   if $ntp::keys_enable {
     $directory = dirname($ntp::keys_file)
     case $directory {
@@ -16,6 +26,15 @@ class ntp::config inherits ntp {
     }
   }
 
+  if $ntp::statsdir {
+    file { $ntp::statsdir:
+      ensure => directory,
+      owner  => $ntp_log_owner,
+      group  => $ntp_log_group,
+      mode   => '0755',
+    }
+  }
+
   file { $ntp::config:
     ensure  => file,
     owner   => 0,
@@ -27,8 +46,8 @@ class ntp::config inherits ntp {
   if $ntp::logfile {
     file { $ntp::logfile:
       ensure => 'file',
-      owner  => 'ntp',
-      group  => 'ntp',
+      owner  => $ntp_log_owner,
+      group  => $ntp_log_group,
       mode   => '0664',
     }
   }

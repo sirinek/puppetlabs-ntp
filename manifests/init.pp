@@ -7,6 +7,7 @@ class ntp (
   $disable_dhclient  = $ntp::params::disable_dhclient,
   $disable_kernel    = $ntp::params::disable_kernel,
   $disable_monitor   = $ntp::params::disable_monitor,
+  $filegen           = $ntp::params::filegen,
   $fudge             = $ntp::params::fudge,
   $driftfile         = $ntp::params::driftfile,
   $leapfile          = $ntp::params::leapfile,
@@ -24,6 +25,7 @@ class ntp (
   $package_name      = $ntp::params::package_name,
   $panic             = $ntp::params::panic,
   $peers             = $ntp::params::peers,
+  $pidfile           = $ntp::params::pidfile,
   $preferred_servers = $ntp::params::preferred_servers,
   $restrict          = $ntp::params::restrict,
   $interfaces        = $ntp::params::interfaces,
@@ -32,6 +34,7 @@ class ntp (
   $service_ensure    = $ntp::params::service_ensure,
   $service_manage    = $ntp::params::service_manage,
   $service_name      = $ntp::params::service_name,
+  $statsdir          = $ntp::params::statsdir,
   $stepout           = $ntp::params::stepout,
   $tinker            = $ntp::params::tinker,
   $tos               = $ntp::params::tos,
@@ -67,6 +70,7 @@ class ntp (
   if $panic { validate_numeric($panic, 65535, 0) }
   validate_array($preferred_servers)
   validate_array($restrict)
+  if $filegen { validate_hash($filegen) }
   validate_array($interfaces)
   validate_array($servers)
   validate_array($fudge)
@@ -84,6 +88,8 @@ class ntp (
   if $tos_cohort { validate_re($tos_cohort, '^[0|1]$', "Must be 0 or 1, got: ${tos_cohort}") }
   validate_bool($udlc)
   validate_array($peers)
+  if $statsdir { validate_absolute_path($statsdir) }
+  if $pidfile { validate_absolute_path($pidfile) }
 
   if $autoupdate {
     notice('autoupdate parameter has been deprecated and replaced with package_ensure.  Set this to latest for the same behavior as autoupdate => true.')
